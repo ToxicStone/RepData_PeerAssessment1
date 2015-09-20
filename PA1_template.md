@@ -5303,19 +5303,10 @@ we
 tempwd<-aggregate(wd$steps, by=list(interval = wd$interval),  FUN = mean, na.rm=TRUE)
 tempwd$wd="weekday"
 tempwe<-aggregate(we$steps, by=list(interval = we$interval),  FUN = mean, na.rm=TRUE)
+tempwe$wd="weekend"
 temp<-rbind(tempwe,tempwd)
-```
-
-```
-## Error in rbind(deparse.level, ...): numbers of columns of arguments do not match
-```
-
-```r
 library(lattice)
 xyplot(x ~ interval | wd, data=temp, layout = c(1,2), type="l")
 ```
 
-```
-## Error in sort.list(y): 'x' must be atomic for 'sort.list'
-## Have you called 'sort' on a list?
-```
+![plot of chunk unnamed-chunk-11](figure/unnamed-chunk-11-1.png) 

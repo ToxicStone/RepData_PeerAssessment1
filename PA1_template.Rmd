@@ -122,6 +122,7 @@ we
 tempwd<-aggregate(wd$steps, by=list(interval = wd$interval),  FUN = mean, na.rm=TRUE)
 tempwd$wd="weekday"
 tempwe<-aggregate(we$steps, by=list(interval = we$interval),  FUN = mean, na.rm=TRUE)
+tempwe$wd="weekend"
 temp<-rbind(tempwe,tempwd)
 library(lattice)
 xyplot(x ~ interval | wd, data=temp, layout = c(1,2), type="l")

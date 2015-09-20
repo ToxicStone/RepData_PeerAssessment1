@@ -46,8 +46,10 @@ hist(temp$x, xlab="number of steps", main="Histogram of the number of steps by d
 
 Then, we have to compute the mean and the median, without taking into account NA values.
 ```{r echo=TRUE}
-mean(temp$x, na.rm=TRUE)
-median(temp$x, na.rm=TRUE)
+mean<-mean(temp$x, na.rm=TRUE)
+mean
+median<-median(temp$x, na.rm=TRUE)
+median
 ```
 
 
@@ -59,7 +61,6 @@ First of all, We have to aggregate the number of steps for each five minute inte
 
 ```{r echo=TRUE}
 temp<-aggregate(data$steps, by=list(interval=data$interval), FUN=mean, na.rm = TRUE)
-temp
 plot(temp$interval,temp$x,type="l",ylab="Average number of steps", xlab="Five minute interval of the day")
 ```
 
@@ -81,7 +82,38 @@ summary(data)
 sum(is.na(data$steps))
 ```
 
-Let us copy the original data then fill the missing value with the avera missing value for that interval. 
+Let us copy the original data then fill the missing value with the average value for that interval. 
 
+```{r}
+cleandata<-data
+rows<-which(is.na(cleandata$steps))
+for(i in rows) {
+  interval<-cleandata[i,"interval"]
+  val<-temp[temp$interval==interval,"x"]
+  cleandata[i,"steps"]<-val
+}
+
+summary(cleandata)
+```
+
+Now lets us compute the histogram, mean and median for the imputed data.
+
+```{r echo=TRUE}
+temp<-aggregate(cleandata$steps, by=list(data = cleandata$date),  FUN = sum)
+hist(temp$x, xlab="number of steps", main="Histogram of the number of steps by day")
+mean<-mean(temp$x, na.rm=TRUE)
+mean
+median<-median(temp$x, na.rm=TRUE)
+median
+```
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+Let us add a column wd which equals weekday or weekend.
+
+```{r echo=TRUE}
+cleandata$wd=ifelse(weekdays(ymd(as.character(cleandata$date)))=="samedi"||weekdays(ymd(as.character(cleandata$date)))=="dimanche","weekend","weekday")
+cleandata$wd = as.factor(cleandata$wd)
+temp<-aggregate(cleandata$steps, by=list(data = cleandata$date, wd = cleandata$wd),  FUN = mean)
+temp
+```

@@ -112,8 +112,17 @@ median
 Let us add a column wd which equals weekday or weekend.
 
 ```{r echo=TRUE}
-cleandata$wd=ifelse(weekdays(ymd(as.character(cleandata$date)))=="samedi"||weekdays(ymd(as.character(cleandata$date)))=="dimanche","weekend","weekday")
+cleandata$wd=ifelse(weekdays(ymd(as.character(cleandata$date)))=="samedi"|weekdays(ymd(as.character(cleandata$date)))=="dimanche","weekend","weekday")
 cleandata$wd = as.factor(cleandata$wd)
-temp<-aggregate(cleandata$steps, by=list(data = cleandata$date, wd = cleandata$wd),  FUN = mean)
-temp
+
+wd<-cleandata[cleandata$wd=="weekday",]
+wd
+we<-cleandata[cleandata$wd=="weekend",]
+we
+tempwd<-aggregate(wd$steps, by=list(interval = wd$interval),  FUN = mean, na.rm=TRUE)
+tempwd$wd="weekday"
+tempwe<-aggregate(we$steps, by=list(interval = we$interval),  FUN = mean, na.rm=TRUE)
+temp<-rbind(tempwe,tempwd)
+library(lattice)
+xyplot(x ~ interval | wd, data=temp, layout = c(1,2), type="l")
 ```

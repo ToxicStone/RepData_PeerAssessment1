@@ -116,9 +116,7 @@ cleandata$wd=ifelse(weekdays(ymd(as.character(cleandata$date)))=="samedi"|weekda
 cleandata$wd = as.factor(cleandata$wd)
 
 wd<-cleandata[cleandata$wd=="weekday",]
-wd
 we<-cleandata[cleandata$wd=="weekend",]
-we
 tempwd<-aggregate(wd$steps, by=list(interval = wd$interval),  FUN = mean, na.rm=TRUE)
 tempwd$wd="weekday"
 tempwe<-aggregate(we$steps, by=list(interval = we$interval),  FUN = mean, na.rm=TRUE)

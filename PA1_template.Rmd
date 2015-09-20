@@ -8,18 +8,80 @@ output:
 
 ## Loading and preprocessing the data
 
+The data file is in the working directory as a compressed file. We first have to unzip the file `activity.zip`.
+It generates the file `activity.csv`.
 
+Then, we can load the data thanks to the read.csv() command.
+
+The call to the `summary` function should show that the data are correctly loaded.
+
+```{r echo=TRUE}
+unzip("activity.zip")
+data <- read.csv("activity.csv")
+summary(data)
+```
+
+As the `date` field is a factor, we transform into a date thanks to the `lubridate` package.
+
+```{r echo=TRUE}
+library(lubridate)
+data$date<-ymd(as.character(data$date))
+```
 
 ## What is mean total number of steps taken per day?
 
+In order to aswer this question, we first have to sum the number of steps for each day.
+
+`temp` is a dataframe which accumulates the number of steps for each day.
+```{r echo=TRUE}
+temp<-aggregate(data$steps, by=list(data = data$date),  FUN = sum)
+print(temp)
+```
+
+Let's plot a histogram for the number of steps in each day.
+```{r echo=TRUE}
+hist(temp$x, xlab="number of steps", main="Histogram of the number of steps by day")
+```
+
+
+Then, we have to compute the mean and the median, without taking into account NA values.
+```{r echo=TRUE}
+mean(temp$x, na.rm=TRUE)
+median(temp$x, na.rm=TRUE)
+```
 
 
 ## What is the average daily activity pattern?
 
+Let us now show a time serie plot of the average number of steps for each five minute interval.
+
+First of all, We have to aggregate the number of steps for each five minute interval.
+
+```{r echo=TRUE}
+temp<-aggregate(data$steps, by=list(interval=data$interval), FUN=mean, na.rm = TRUE)
+temp
+plot(temp$interval,temp$x,type="l",ylab="Average number of steps", xlab="Five minute interval of the day")
+```
+
+Let us find the interval for the maximum average number of steps.
+
+```{r echo=TRUE}
+m <- max(temp$x);
+m
+maxinterval<-temp[temp$x==m,]$interval
+maxinterval
+temp[temp$interval==maxinterval,]
+```
 
 
 ## Imputing missing values
 
+```{r echo=TRUE}
+summary(data)
+sum(is.na(data$steps))
+```
+
+Let us copy the original data then fill the missing value with the avera missing value for that interval. 
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
